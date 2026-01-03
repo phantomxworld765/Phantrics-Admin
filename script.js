@@ -26,7 +26,7 @@ const getStatusStyles = (status) => {
 // Real-time Database Listener
 database.ref('payments').on('value', (snapshot) => {
     const data = snapshot.val();
-    const gridContainer = document.querySelector('.grid'); 
+    const gridContainer = document.querySelector('#payments .grid'); 
     
     if (gridContainer) {
         gridContainer.innerHTML = ""; // Purana data clear karein
@@ -52,4 +52,5 @@ database.ref('payments').on('value', (snapshot) => {
         }
     }
 });
+
 
