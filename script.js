@@ -1,3 +1,20 @@
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAUGdB4H-KmOAxXGfVBE95-kP6UeP6aXqw",
+  authDomain: "phantrics-paymentsbot.firebaseapp.com",
+  projectId: "phantrics-paymentsbot",
+  storageBucket: "phantrics-paymentsbot.firebasestorage.app",
+  messagingSenderId: "699181120500",
+  appId: "1:699181120500:web:4c79588d550705a360d7a1",
+  measurementId: "G-WWS07H6N36"
+};
+
+// Initialize Firebase
+// Firebase ko initialize karne ka sahi tarika compatibility mode mein
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database(); // Ab aap database use kar sakte hain
+
 // Dashboard functionality for Phantrics Admin
 document.addEventListener('DOMContentLoaded', function() {
     initializeDashboard();
@@ -148,6 +165,41 @@ function openEmployees() {
 function openTransactions() {
     console.log('Opening Transactions...');
     // Add your transactions logic here
+    function openPayments() {
+    console.log('Fetching live payments...');
+    
+    // Firebase se payments uthane ka logic
+    database.ref('payments').on('value', (snapshot) => {
+        const payments = snapshot.val();
+        const grid = document.querySelector('.grid'); // Aapka display area
+        grid.innerHTML = ""; // Purana data saaf karne ke liye
+
+        if (payments) {
+            Object.keys(payments).forEach(id => {
+                const p = payments[id];
+                // Ek sunder card banayein har payment ke liye
+                grid.innerHTML += `
+                    <div class="card">
+                        <h3>${p.name}</h3>
+                        <p>Amount: ₹${p.amount}</p>
+                        <p>UTR: ${p.utr}</p>
+                        <button onclick="approve('${id}')">Approve</button>
+                    </div>`;
+            });
+        } else {
+            grid.innerHTML = "<p>No pending payments.</p>";
+        }
+    });
+}
+function approve(id) {
+    database.ref('payments/' + id).update({
+        status: 'Success'
+    }).then(() => {
+        alert("Payment Approved!");
+        // Yahan se aap Telegram notification bhi bhej sakte hain
+    });
+}
+
 }
 
 function openGallery() {
