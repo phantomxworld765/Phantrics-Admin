@@ -1,39 +1,50 @@
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase configuration (Aapki apni API key yahan pehle se hogi)
 const firebaseConfig = {
-  apiKey: "AIzaSyAUGdB4H-KmOAxXGfVBE95-kP6UeP6aXqw",
+  apiKey: "AIzaSyAUGdB4H-KnOAxXGfVBE95-kP6UeP6aXqw",
   authDomain: "phantrics-paymentsbot.firebaseapp.com",
   projectId: "phantrics-paymentsbot",
   storageBucket: "phantrics-paymentsbot.firebasestorage.app",
   messagingSenderId: "699181120500",
   appId: "1:699181120500:web:4c79588d550705a360d7a1",
-  measurementId: "G-WWS07H6N36"
+  measurementId: "G-WW507H6N36"
 };
 
 // Initialize Firebase
-// Firebase ko initialize karne ka sahi tarika compatibility mode mein
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database(); // Ab aap database use kar sakte hain
-// Database se data lene ka asli logic
+const database = firebase.database();
+
+// Dashboard update karne ka asli logic
 database.ref('payments').on('value', (snapshot) => {
     const data = snapshot.val();
-    const gridContainer = document.querySelector('.grid'); // Check karein aapka main div yahi hai
+    const gridContainer = document.querySelector('.grid'); 
     
-    if (data) {
-        gridContainer.innerHTML = ""; // Purana static data saaf karein
+    if (data && gridContainer) {
+        gridContainer.innerHTML = ""; // Purana data saaf karein
+        
         Object.keys(data).forEach(id => {
             const item = data[id];
+            
+            // Status ke hisab se color class chunna
+            let statusClass = "status-pending"; // Default
+            if (item.status === "successful" || item.status === "success") {
+                statusClass = "status-success";
+            } else if (item.status === "failed") {
+                statusClass = "status-failed";
+            }
+
+            // Card ka HTML taiyaar karna
             gridContainer.innerHTML += `
                 <div class="card">
                     <div class="card-icon">💰</div>
                     <h3>₹${item.amount}</h3>
                     <p>${item.name}</p>
-                    <span class="status-badge">${item.status}</span>
+                    <span class="status-badge ${statusClass}">${item.status}</span>
                 </div>
             `;
         });
     }
 });
+
 
 database.ref('payments').on('value', (snapshot) => {
     const data = snapshot.val();
@@ -371,6 +382,7 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
 
 
 
