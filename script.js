@@ -27,7 +27,31 @@ const getStatusStyles = (status) => {
 database.ref('payments').on('value', (snapshot) => {
     const data = snapshot.val();
     const gridContainer = document.querySelector('#payments .grid'); 
+// 1. Notification Awaaz ka intezam
+const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+// 2. Browser permission mangna (Page load hote hi)
+if (window.Notification && Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
+// 3. Nayi Payment aate hi Alert dene ka logic
+database.ref('payments').on('child_added', (snapshot) => {
+    const newPayment = snapshot.val();
     
+    // Sirf tab awaaz kare jab data real-time mein aaye
+    notificationSound.play().catch(e => console.log("Sound play error:", e));
+
+    // Desktop/Mobile Notification dikhana
+    if (Notification.permission === "granted") {
+        new Notification("New Payment Alert! 💰", {
+            body: `${newPayment.name || 'User'} ne ₹${newPayment.amount || '0'} ki payment bheji hai.`,
+            icon: "https://cdn-icons-png.flaticon.com/512/3135/3135706.png"
+        });
+    }
+});
+
+  
     if (gridContainer) {
         gridContainer.innerHTML = ""; // Purana data clear karein
         
@@ -52,5 +76,6 @@ database.ref('payments').on('value', (snapshot) => {
         }
     }
 });
+
 
 
