@@ -14,6 +14,7 @@ const firebaseConfig = {
 // Firebase ko initialize karne ka sahi tarika compatibility mode mein
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database(); // Ab aap database use kar sakte hain
+alert("Firebase Ready!");
 
 // Dashboard functionality for Phantrics Admin
 document.addEventListener('DOMContentLoaded', function() {
@@ -341,3 +342,4 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
