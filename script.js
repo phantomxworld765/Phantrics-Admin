@@ -14,7 +14,16 @@ const firebaseConfig = {
 // Firebase ko initialize karne ka sahi tarika compatibility mode mein
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database(); // Ab aap database use kar sakte hain
-alert("Firebase Ready!");
+// Line 17 par alert hata kar ye dalein:
+database.ref('payments').on('value', (snapshot) => {
+    const data = snapshot.val();
+    console.log("Live Data Received:", data);
+    if(data) {
+        // Agar data milta hai toh dashboard refresh hoga
+        // Yahan aap apna updateUI() function call kar sakte hain
+    }
+});
+
 
 // Dashboard functionality for Phantrics Admin
 document.addEventListener('DOMContentLoaded', function() {
@@ -342,4 +351,5 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
 
