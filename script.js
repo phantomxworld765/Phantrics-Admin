@@ -14,7 +14,27 @@ const firebaseConfig = {
 // Firebase ko initialize karne ka sahi tarika compatibility mode mein
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database(); // Ab aap database use kar sakte hain
-// Line 17 par alert hata kar ye dalein:
+// Database se data lene ka asli logic
+database.ref('payments').on('value', (snapshot) => {
+    const data = snapshot.val();
+    const gridContainer = document.querySelector('.grid'); // Check karein aapka main div yahi hai
+    
+    if (data) {
+        gridContainer.innerHTML = ""; // Purana static data saaf karein
+        Object.keys(data).forEach(id => {
+            const item = data[id];
+            gridContainer.innerHTML += `
+                <div class="card">
+                    <div class="card-icon">💰</div>
+                    <h3>₹${item.amount}</h3>
+                    <p>${item.name}</p>
+                    <span class="status-badge">${item.status}</span>
+                </div>
+            `;
+        });
+    }
+});
+
 database.ref('payments').on('value', (snapshot) => {
     const data = snapshot.val();
     console.log("Live Data Received:", data);
@@ -351,5 +371,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
 
 
