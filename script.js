@@ -14,6 +14,12 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const database = firebase.database();
+// Is line ko code ke sabse upar (script.js mein) daal dein
+document.addEventListener('click', () => {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+}, { once: true });
 
 // Status ke hisab se styling function
 const getStatusStyles = (status) => {
@@ -76,6 +82,7 @@ database.ref('payments').on('child_added', (snapshot) => {
         }
     }
 });
+
 
 
 
