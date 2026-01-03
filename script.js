@@ -14,12 +14,19 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const database = firebase.database();
-// Is line ko code ke sabse upar (script.js mein) daal dein
-document.addEventListener('click', () => {
-    if (Notification.permission !== "granted") {
-        Notification.requestPermission();
+// Naya Permission Logic (Line 17 ke aas-paas)
+function requestNotificationPermission() {
+    if (window.Notification && Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+            console.log("Notification permission:", permission);
+        });
     }
-}, { once: true });
+}
+
+// Page load hote hi aur click karte hi check karega
+window.onload = requestNotificationPermission;
+document.addEventListener('click', requestNotificationPermission, { once: true });
+
 
 // Status ke hisab se styling function
 const getStatusStyles = (status) => {
@@ -82,6 +89,7 @@ database.ref('payments').on('child_added', (snapshot) => {
         }
     }
 });
+
 
 
 
