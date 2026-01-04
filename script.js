@@ -8,18 +8,17 @@ const firebaseConfig = {
     appId: "1:699181120500:web:4c79588d550705a360d7a1"
 };
 
-// Pura code window load ke baad chalega
 window.onload = function() {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
     const database = firebase.database();
 
-    // 1. Dashboard Cards Logic
+    // DASHBOARD CARDS (Line 29 Fix)
     database.ref('payments').on('value', (snapshot) => {
         const data = snapshot.val();
-        // Aapke HTML ke hisab se selector
-        const gridContainer = document.querySelector('#payments .grid') || document.querySelector('.grid');
+        // Aapke HTML mein 'payments' ID ke andar jo 'grid' hai ye use dhoondhega
+        const gridContainer = document.querySelector('#payments .grid');
         
         if (gridContainer) {
             gridContainer.innerHTML = ""; 
@@ -27,9 +26,10 @@ window.onload = function() {
                 Object.keys(data).forEach(id => {
                     const item = data[id];
                     gridContainer.innerHTML += `
-                        <div style="background:#2a2a40; color:white; padding:15px; margin-bottom:10px; border-radius:10px; border-left: 5px solid #28a745;">
-                            <h3 style="margin:0;">₹${item.amount || '0'}</h3>
-                            <p style="margin:5px 0;">Name: ${item.name || 'User'}</p>
+                        <div style="background:#2a2a40; color:white; padding:15px; margin-bottom:10px; border-radius:10px; border-left: 5px solid #28a745; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                            <h3 style="margin:0; color:#28a745;">₹${item.amount || '0'}</h3>
+                            <p style="margin:5px 0; font-weight:bold;">Name: ${item.name || 'User'}</p>
+                            <span style="font-size:12px; opacity:0.7;">Status: ${item.status || 'Success'}</span>
                         </div>`;
                 });
             } else {
@@ -38,12 +38,12 @@ window.onload = function() {
         }
     });
 
-    // 2. Alert Logic
+    // ALERT NOTIFICATION
     database.ref('payments').limitToLast(1).on('child_added', (snapshot) => {
         const newP = snapshot.val();
-        // 3 second delay taaki page load hone par purana alert na aaye
+        // Page load hone ke 3 second baad active hoga
         setTimeout(() => {
-            alert("💰 Nayi Payment: " + (newP.name || "User") + " (₹" + (newP.amount || "0") + ")");
+            alert("💰 Nayi Payment Aai Hai!\nNaam: " + (newP.name || "User") + "\nAmount: ₹" + (newP.amount || "0"));
         }, 3000);
     });
 };
