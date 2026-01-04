@@ -13,7 +13,61 @@ window.onload = function() {
         firebase.initializeApp(firebaseConfig);
     }
     const database = firebase.database();
+// Payment notification listener - add after your Firebase config
+const paymentsRef = firebase.database().ref('payments');
 
+paymentsRef.on('child_added', (snapshot) => {
+  const payment = snapshot.val();
+  displayPaymentAlert(payment);
+});
+
+paymentsRef.on('child_changed', (snapshot) => {
+  const payment = snapshot.val();
+  displayPaymentAlert(payment);
+});
+
+function displayPaymentAlert(payment) {
+  let alertColor, alertIcon, alertText;
+  
+  switch(payment.status) {
+    case 'successful':
+      alertColor = '#28a745';
+      alertIcon = '✓';
+      alertText = `Payment Successful - ${payment.name} (₹${payment.amount})`;
+      break;
+    case 'failed':
+      alertColor = '#dc3545';
+      alertIcon = '✗';
+      alertText = `Payment Failed - ${payment.name}`;
+      break;
+    case 'pending':
+      alertColor = '#ffc107';
+      alertIcon = '⏳';
+      alertText = `Payment Pending - ${payment.name}`;
+      break;
+  }
+  
+  // Create alert box
+  const alert = document.createElement('div');
+  alert.innerHTML = `${alertIcon} ${alertText}`;
+  alert.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${alertColor};
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+  `;
+  
+  document.body.appendChild(alert);
+  
+  // Remove after 5 seconds
+  setTimeout(() => alert.remove(), 5000);
+}
     // DASHBOARD CARDS (Line 29 Fix)
     database.ref('payments').on('value', (snapshot) => {
         const data = snapshot.val();
@@ -47,4 +101,5 @@ window.onload = function() {
         }, 3000);
     });
 };
+
 
