@@ -25,8 +25,13 @@ const getStatusStyles = (status) => {
 // Dashboard par cards dikhana
 database.ref('payments').on('value', (snapshot) => {
     const data = snapshot.val();
-    const gridContainer = document.querySelector('#payments .grid');
-    if (!gridContainer) return;
+        const data = snapshot.val();
+    const gridContainer = document.querySelector('.grid') || document.querySelector('#payments .grid');
+    
+    if (!gridContainer) {
+        console.log("Grid container nahi mila!");
+        return;
+    }
 
     gridContainer.innerHTML = ""; 
     if (data) {
@@ -52,4 +57,5 @@ database.ref('payments').limitToLast(1).on('child_added', (snapshot) => {
         alert("💰 Nayi Payment: " + newP.name + " (₹" + newP.amount + ")");
     }, 2000);
 });
+
 
